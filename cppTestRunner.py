@@ -54,7 +54,6 @@ def run_single_cpp_program(param, cpp_program):
                 if result == "PASS":
                     correct_count += 1
             except Exception as te:
-                print(str(te))
                 print("TLE")
         correctness = correct_count / testNum
         return correctness
