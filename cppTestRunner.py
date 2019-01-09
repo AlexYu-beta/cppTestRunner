@@ -1,5 +1,5 @@
 # cppTestRunner.py
-# v0.1
+# v1.0
 # run a small piece of cpp code with given test inputs and match them with given test outputs
 # by Alex Yu
 
@@ -12,11 +12,28 @@ import sys
 import timeout_decorator
 
 
+@timeout_decorator.timeout(2, use_signals=False)
 def run_single_test(param, cpp_program, test_id):
     test_input = param["testInput_dir"] + "/" + str(test_id) + ".in"
-    test_output = param["testInput_dir"] + "/" + str(test_id) + ".out"
-    print("test input is" + test_input)
-    print("test output is" + test_output)
+    test_output = param["testOutput_dir"] + "/" + str(test_id) + ".out"
+    sentence_1 = "cd " + param["cppOut_dir"] + " && " \
+                 + "./" + re.sub('.cpp', '.o', cpp_program, flags=re.I)\
+                 + " < " + test_input
+    try:
+        cmd_1 = sp.check_output(sentence_1, shell=True)
+    except Exception as e:
+        return "WA"
+    else:
+        sentence_2 = "cat " + test_output
+        try:
+            cmd_2 = sp.check_output(sentence_2, shell=True)
+        except Exception as ee:
+            return "WA: weird"
+        else:
+            if cmd_1 == cmd_2:
+                return "PASS"
+            else:
+                return "WA"
 
 
 def run_single_cpp_program(param, cpp_program):
@@ -40,6 +57,7 @@ def run_single_cpp_program(param, cpp_program):
                 if result == "PASS":
                     correct_count += 1
             except Exception as te:
+                print(str(te))
                 print("TLE")
         correctness = correct_count / testNum
         return correctness
@@ -78,7 +96,6 @@ def initialize_param(taskName):
 
 
 def main():
-    sys.path.append("/home/alex/.local/lib/python3.6/site-packages/timeout_decorator/timeout_decorator.py")
     param = initialize_param("sort")
     run_task(param)
 
