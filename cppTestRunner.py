@@ -6,9 +6,6 @@
 import subprocess as sp
 import os
 import re
-import time
-from threading import Thread
-import sys
 import timeout_decorator
 
 
