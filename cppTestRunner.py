@@ -55,6 +55,8 @@ def run_single_cpp_program(param, cpp_program):
                     correct_count += 1
             except Exception as te:
                 print("TLE")
+                kill_sentence = "pgrep " + re.sub('.cpp', '.o', cpp_program, flags=re.I) + " | xargs kill -9"
+                sp.call(kill_sentence, shell=True)
         correctness = correct_count / testNum
         return correctness
 
